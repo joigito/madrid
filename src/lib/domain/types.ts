@@ -1,0 +1,44 @@
+export type EstadoOperacion = "en_curso" | "cerrada" | "cancelada";
+
+export type TipoOperacion = "importacion" | "exportacion";
+
+export interface Operacion {
+  id: string;
+  user_id: string;
+  referencia: string | null;
+  descripcion: string;
+  proveedor: string | null;
+  pais_origen: string | null;
+  incoterm: string | null;
+  estado: EstadoOperacion;
+  fecha_inicio: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EtapaOperacion {
+  id: string;
+  operacion_id: string;
+  user_id: string;
+  orden: number;
+  nombre: string;
+  organismo: string | null;
+  url: string | null;
+  fecha_limite: string | null;
+  completada: boolean;
+  completada_at: string | null;
+  notas: string | null;
+}
+
+export interface CatalogoEtapa {
+  id: string;
+  tipo_operacion: TipoOperacion;
+  orden: number;
+  nombre: string;
+  organismo: string | null;
+  url: string | null;
+  plazo_dias: number;
+  descripcion: string | null;
+}
+
+export type Semaforo = "completada" | "vencida" | "por_vencer" | "ok" | "sin_fecha";
