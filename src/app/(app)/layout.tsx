@@ -25,7 +25,7 @@ export default async function AppLayout({
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-3">
           <Link href="/tablero" className="text-sm font-semibold tracking-tight">
-            Mesa de Comercio Exterior
+            Madrid Gestión de Comercio Exterior
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-slate-500">{email}</span>

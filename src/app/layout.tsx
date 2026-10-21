@@ -9,9 +9,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Mesa de Comercio Exterior",
+  title: "Madrid Gestión de Comercio Exterior",
   description:
-    "Espacio de trabajo para profesionales de comercio exterior: seguimiento de operaciones, organismos y vencimientos.",
+    "Expedientes de importación para el operador de comercio exterior: etapas, organismos y vencimientos en un solo lugar.",
 };
 
 export default function RootLayout({
