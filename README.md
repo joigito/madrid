@@ -54,9 +54,14 @@ src/lib/domain/      tipos del dominio y el semáforo de vencimientos
 
 ```bash
 pnpm build
-pnpm start          # escucha en :3000
+sudo cp deploy/madrid.service /etc/systemd/system/madrid.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now madrid     # escucha en :3000
+
+systemctl status madrid
+journalctl -u madrid -f
 ```
 
 Caddy hace de reverse proxy con HTTPS en `https://madridext.duckdns.org` → `host.docker.internal:3000` (ver `/root/n8n-docker-caddy/Caddyfile`).
 
-**Backups**: `sqlite3 data/madrid.db ".backup /ruta/backup/madrid-$(date +%F).db"` — correrlo con un cron, nunca copiar el archivo en caliente (WAL).
+**Backups**: `pnpm backup` deja una copia consistente en `backups/` (API de backup de SQLite, se puede hacer con la base en uso) y borra las de más de 14 días. El cron corre todos los días a las 03:00 y loguea en `/var/log/madrid-backup.log`.

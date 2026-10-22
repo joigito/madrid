@@ -1,0 +1,16 @@
+[Unit]
+Description=Madrid Gestion de Comercio Exterior
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/projects/com-ext-app
+ExecStart=/usr/bin/pnpm start
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

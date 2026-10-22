@@ -34,8 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
-# sqlite database
+# sqlite database and its backups
 /data/
+/backups/
 
 # local caches
 /.atl/
