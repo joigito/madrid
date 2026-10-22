@@ -27,15 +27,16 @@ export async function crearOperacion(formData: FormData) {
       base
         .prepare(
           `INSERT INTO operaciones
-             (id, user_id, referencia, descripcion, proveedor, pais_origen, incoterm, fecha_inicio)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+             (id, user_id, referencia, descripcion, proveedor_contacto_id, cliente_contacto_id, pais_origen, incoterm, fecha_inicio)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           operacionId,
           usuario.id,
           vacioANulo(formData.get("referencia")),
           descripcion,
-          vacioANulo(formData.get("proveedor")),
+          contactoDelUsuario(formData.get("proveedor_contacto_id"), usuario.id),
+          contactoDelUsuario(formData.get("cliente_contacto_id"), usuario.id),
           vacioANulo(formData.get("pais_origen")),
           vacioANulo(formData.get("incoterm")),
           fechaInicio,
@@ -125,4 +126,18 @@ export async function actualizarEtapa(formData: FormData) {
 function vacioANulo(valor: FormDataEntryValue | null): string | null {
   const texto = String(valor ?? "").trim();
   return texto === "" ? null : texto;
+}
+
+function contactoDelUsuario(
+  valor: FormDataEntryValue | null,
+  userId: string,
+): string | null {
+  const id = vacioANulo(valor);
+  if (!id) return null;
+
+  const fila = obtenerBase()
+    .prepare("SELECT id FROM contactos WHERE id = ? AND user_id = ?")
+    .get(id, userId) as { id: string } | undefined;
+
+  return fila ? fila.id : null;
 }

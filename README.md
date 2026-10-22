@@ -16,6 +16,12 @@ Espacio de trabajo privado para el operador de comercio internacional: el **expe
 
 Cada etapa trae el link oficial del organismo y una fecha límite sugerida que se recalcula según la fecha de inicio del expediente. Todo es editable: los plazos y los organismos cambian según el régimen y el tipo de mercadería.
 
+## Contactos
+
+Proveedores y clientes viven en la misma tabla porque son la misma clase de entidad: una empresa o persona del exterior con la que operás. Cada contacto tiene dos casilleros independientes, **Proveedor** (te vende) y **Cliente** (te compra), y puede tener los dos a la vez.
+
+El expediente elige proveedor y cliente de esa lista en vez de escribir el nombre a mano. Los contactos no se borran, se **archivan**: dejan de aparecer en los selectores pero las operaciones históricas siguen mostrando sus datos.
+
 ## Stack
 
 - **Next.js 16** (App Router, Turbopack, proxy en Node.js) — Server Actions para todas las escrituras
@@ -39,6 +45,7 @@ Abrí [http://localhost:3000](http://localhost:3000). La base se crea sola en `d
 ```
 src/lib/db/          conexión + esquema (SCHEMA_SQL) y seed del catálogo
 src/lib/auth/        contraseñas (scrypt), sesiones en cookie y server actions de login/registro/logout
+src/lib/contactos/   queries y server actions de proveedores/clientes (dos roles independientes, archivar en vez de borrar)
 src/lib/operaciones/ queries y server actions del expediente (todas filtran por user_id)
 src/proxy.ts         guardia de rutas: sin sesión no se entra, con sesión no se ve /login
 src/lib/domain/      tipos del dominio y el semáforo de vencimientos

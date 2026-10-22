@@ -4,14 +4,21 @@ import { redirect } from "next/navigation";
 import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
 import { semaforoOperacion, CLASES_SEMAFORO, ETIQUETA_SEMAFORO } from "@/lib/domain/vencimientos";
 import { formatearFecha } from "@/lib/fechas";
+import { contactosParaSelector } from "@/lib/contactos/queries";
 import { crearOperacion } from "@/lib/operaciones/actions";
 import { obtenerOperacionesDelUsuario } from "@/lib/operaciones/queries";
+
+const CLASE_LABEL = "block text-sm font-medium text-slate-700 dark:text-slate-300";
+const CLASE_INPUT =
+  "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700";
 
 export default async function TableroPage() {
   const usuario = await obtenerUsuarioDeSesion();
   if (!usuario) redirect("/login");
 
   const operaciones = obtenerOperacionesDelUsuario(usuario.id);
+  const proveedores = contactosParaSelector(usuario.id, "proveedor");
+  const clientes = contactosParaSelector(usuario.id, "cliente");
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
@@ -56,6 +63,12 @@ export default async function TableroPage() {
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         Ref.: {op.referencia ?? "—"} • Inicio: {formatearFecha(op.fecha_inicio)}
                       </p>
+                      {(op.proveedor_nombre || op.cliente_nombre) && (
+                        <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                          {op.proveedor_nombre ?? "Sin proveedor"}
+                          {op.cliente_nombre ? ` → ${op.cliente_nombre}` : ""}
+                        </p>
+                      )}
                     </div>
                     <span
                       className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${CLASES_SEMAFORO[sem]}`}
@@ -87,63 +100,85 @@ export default async function TableroPage() {
           </header>
           <form action={crearOperacion} className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className={CLASE_LABEL}>
                 Descripción *
               </label>
               <input
                 name="descripcion"
                 required
                 placeholder="Ej. Importación de insumos industriales"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
+                className={CLASE_INPUT}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className={CLASE_LABEL}>
                 Referencia
               </label>
               <input
                 name="referencia"
                 placeholder="IMP-2026-001"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
+                className={CLASE_INPUT}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className={CLASE_LABEL}>
                 Fecha de inicio
               </label>
               <input
                 type="date"
                 name="fecha_inicio"
                 defaultValue={new Date().toISOString().slice(0, 10)}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
+                className={CLASE_INPUT}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                Proveedor
-              </label>
-              <input
-                name="proveedor"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
-              />
+              <label className={CLASE_LABEL}>Proveedor</label>
+              <select name="proveedor_contacto_id" className={CLASE_INPUT}>
+                <option value="">Sin asignar</option>
+                {proveedores.map((contacto) => (
+                  <option key={contacto.id} value={contacto.id}>
+                    {contacto.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className={CLASE_LABEL}>Cliente</label>
+              <select name="cliente_contacto_id" className={CLASE_INPUT}>
+                <option value="">Sin asignar</option>
+                {clientes.map((contacto) => (
+                  <option key={contacto.id} value={contacto.id}>
+                    {contacto.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {proveedores.length === 0 && clientes.length === 0 && (
+              <p className="text-xs text-slate-500 sm:col-span-2 dark:text-slate-400">
+                Todavía no cargaste contactos.{" "}
+                <Link href="/contactos" className="font-medium underline">
+                  Podés cargarlos acá
+                </Link>{" "}
+                y después elegirlos en la operación.
+              </p>
+            )}
+            <div>
+              <label className={CLASE_LABEL}>
                 País de origen
               </label>
               <input
                 name="pais_origen"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
+                className={CLASE_INPUT}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className={CLASE_LABEL}>
                 Incoterm
               </label>
               <input
                 name="incoterm"
                 placeholder="FOB / CIF / DDP"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700"
+                className={CLASE_INPUT}
               />
             </div>
             <div className="sm:col-span-2">

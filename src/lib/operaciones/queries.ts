@@ -1,19 +1,28 @@
 import { obtenerBase } from "@/lib/db";
 import type {
   CatalogoEtapa,
+  Contacto,
+  DetalleOperacion,
   EtapaOperacion,
   EstadoOperacion,
   Operacion,
-  OperacionConEtapas,
+  OperacionResumen,
   TipoOperacion,
 } from "@/lib/domain/types";
+
+import { mapearContacto } from "@/lib/contactos/queries";
 
 type Fila = Record<string, unknown>;
 
 const OPERACIONES_POR_USUARIO = `
-  SELECT * FROM operaciones
-   WHERE user_id = ?
-   ORDER BY datetime(created_at) DESC, id ASC`;
+  SELECT o.*,
+         p.nombre AS proveedor_nombre,
+         c.nombre AS cliente_nombre
+    FROM operaciones o
+    LEFT JOIN contactos p ON p.id = o.proveedor_contacto_id AND p.user_id = o.user_id
+    LEFT JOIN contactos c ON c.id = o.cliente_contacto_id AND c.user_id = o.user_id
+   WHERE o.user_id = ?
+   ORDER BY datetime(o.created_at) DESC, o.id ASC`;
 
 const ETAPAS_POR_USUARIO = `
   SELECT * FROM etapas_operacion
@@ -22,7 +31,7 @@ const ETAPAS_POR_USUARIO = `
 
 export function obtenerOperacionesDelUsuario(
   userId: string,
-): OperacionConEtapas[] {
+): OperacionResumen[] {
   const base = obtenerBase();
 
   const operaciones = base
@@ -43,6 +52,8 @@ export function obtenerOperacionesDelUsuario(
     return {
       ...operacion,
       etapas_operacion: etapasPorOperacion.get(operacion.id) ?? [],
+      proveedor_nombre: (fila.proveedor_nombre as string) ?? null,
+      cliente_nombre: (fila.cliente_nombre as string) ?? null,
     };
   });
 }
@@ -50,7 +61,7 @@ export function obtenerOperacionesDelUsuario(
 export function obtenerOperacionPorId(
   userId: string,
   operacionId: string,
-): { operacion: Operacion; etapas: EtapaOperacion[] } | null {
+): DetalleOperacion | null {
   const base = obtenerBase();
 
   const filaOperacion = base
@@ -58,13 +69,32 @@ export function obtenerOperacionPorId(
     .get(operacionId, userId) as Fila | undefined;
   if (!filaOperacion) return null;
 
+  const operacion = mapearOperacion(filaOperacion);
+
   const etapas = (
     base
-      .prepare("SELECT * FROM etapas_operacion WHERE operacion_id = ? AND user_id = ? ORDER BY orden ASC")
+      .prepare(
+        "SELECT * FROM etapas_operacion WHERE operacion_id = ? AND user_id = ? ORDER BY orden ASC",
+      )
       .all(operacionId, userId) as Fila[]
   ).map(mapearEtapa);
 
-  return { operacion: mapearOperacion(filaOperacion), etapas };
+  return {
+    operacion,
+    etapas,
+    proveedor: buscarContacto(userId, operacion.proveedor_contacto_id),
+    cliente: buscarContacto(userId, operacion.cliente_contacto_id),
+  };
+}
+
+function buscarContacto(userId: string, contactoId: string | null): Contacto | null {
+  if (!contactoId) return null;
+
+  const fila = obtenerBase()
+    .prepare("SELECT * FROM contactos WHERE id = ? AND user_id = ?")
+    .get(contactoId, userId) as Fila | undefined;
+
+  return fila ? mapearContacto(fila) : null;
 }
 
 export function obtenerCatalogo(): CatalogoEtapa[] {
@@ -82,7 +112,8 @@ function mapearOperacion(fila: Fila): Operacion {
     user_id: fila.user_id as string,
     referencia: (fila.referencia as string) ?? null,
     descripcion: fila.descripcion as string,
-    proveedor: (fila.proveedor as string) ?? null,
+    proveedor_contacto_id: (fila.proveedor_contacto_id as string) ?? null,
+    cliente_contacto_id: (fila.cliente_contacto_id as string) ?? null,
     pais_origen: (fila.pais_origen as string) ?? null,
     incoterm: (fila.incoterm as string) ?? null,
     estado: fila.estado as EstadoOperacion,

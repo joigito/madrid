@@ -26,12 +26,31 @@ CREATE TABLE IF NOT EXISTS catalogo_etapas (
   UNIQUE (tipo_operacion, orden)
 );
 
+CREATE TABLE IF NOT EXISTS contactos (
+  id            TEXT PRIMARY KEY,
+  user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  nombre        TEXT NOT NULL,
+  tipo          TEXT NOT NULL DEFAULT 'empresa' CHECK (tipo IN ('empresa', 'persona')),
+  pais          TEXT,
+  email         TEXT,
+  telefono      TEXT,
+  cuit          TEXT,
+  notas         TEXT,
+  es_proveedor  INTEGER NOT NULL DEFAULT 0,
+  es_cliente    INTEGER NOT NULL DEFAULT 0,
+  archivado     INTEGER NOT NULL DEFAULT 0,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS contactos_user_idx ON contactos(user_id);
+
 CREATE TABLE IF NOT EXISTS operaciones (
   id            TEXT PRIMARY KEY,
   user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   referencia    TEXT,
   descripcion   TEXT NOT NULL,
-  proveedor     TEXT,
+  proveedor_contacto_id TEXT REFERENCES contactos(id) ON DELETE SET NULL,
+  cliente_contacto_id   TEXT REFERENCES contactos(id) ON DELETE SET NULL,
   pais_origen   TEXT,
   incoterm      TEXT,
   estado        TEXT NOT NULL DEFAULT 'en_curso',

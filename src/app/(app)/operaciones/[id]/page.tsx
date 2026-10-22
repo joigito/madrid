@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
+import type { Contacto } from "@/lib/domain/types";
 import { formatearFecha } from "@/lib/fechas";
 import {
   calcularSemaforo,
@@ -26,7 +27,7 @@ export default async function OperacionPage({
 
   if (!data) notFound();
 
-  const { operacion, etapas } = data;
+  const { operacion, etapas, proveedor, cliente } = data;
   const completadas = etapas.filter((etapa) => etapa.completada).length;
   const progreso = etapas.length
     ? Math.round((completadas / etapas.length) * 100)
@@ -49,10 +50,17 @@ export default async function OperacionPage({
             </h1>
             <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-600 sm:grid-cols-4 dark:text-slate-400">
               <Info etiqueta="Referencia" valor={operacion.referencia ?? "—"} />
-              <Info etiqueta="Proveedor" valor={operacion.proveedor ?? "—"} />
+              <Info etiqueta="Proveedor" valor={proveedor?.nombre ?? "—"} />
+              <Info etiqueta="Cliente" valor={cliente?.nombre ?? "—"} />
               <Info etiqueta="Origen" valor={operacion.pais_origen ?? "—"} />
               <Info etiqueta="Incoterm" valor={operacion.incoterm ?? "—"} />
             </dl>
+            {(proveedor || cliente) && (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <FichaContacto etiqueta="Proveedor" contacto={proveedor} />
+                <FichaContacto etiqueta="Cliente" contacto={cliente} />
+              </div>
+            )}
           </div>
           <div className="text-right">
             <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{progreso}%</p>
@@ -227,6 +235,41 @@ function Info({ etiqueta, valor }: { etiqueta: string; valor: string }) {
         {etiqueta}
       </dt>
       <dd className="text-slate-700 dark:text-slate-300">{valor}</dd>
+    </div>
+  );
+}
+
+function FichaContacto({
+  etiqueta,
+  contacto,
+}: {
+  etiqueta: string;
+  contacto: Contacto | null;
+}) {
+  if (!contacto) return null;
+
+  const datos = [
+    contacto.pais,
+    contacto.email,
+    contacto.telefono,
+    contacto.cuit ? `CUIT ${contacto.cuit}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+      <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        {etiqueta}
+      </p>
+      <p className="mt-0.5 text-sm font-medium text-slate-900 dark:text-slate-100">
+        {contacto.nombre}
+      </p>
+      {datos && (
+        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          {datos}
+        </p>
+      )}
     </div>
   );
 }

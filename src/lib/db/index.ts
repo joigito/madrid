@@ -19,6 +19,7 @@ function abrirBase(): Database.Database {
   base.pragma("foreign_keys = ON");
 
   base.exec(SCHEMA_SQL);
+  migrar(base);
 
   const { total } = base
     .prepare("SELECT COUNT(*) AS total FROM catalogo_etapas")
@@ -28,6 +29,43 @@ function abrirBase(): Database.Database {
   }
 
   return base;
+}
+
+function migrar(base: Database.Database) {
+  const columnas = new Set(
+    (
+      base.prepare("PRAGMA table_info(operaciones)").all() as {
+        name: string;
+      }[]
+    ).map((columna) => columna.name),
+  );
+
+  const conTextoViejo = columnas.has("proveedor")
+    ? (
+        base
+          .prepare(
+            `SELECT COUNT(*) AS total FROM operaciones
+              WHERE proveedor IS NOT NULL AND proveedor <> ''`,
+          )
+          .get() as { total: number }
+      ).total
+    : 0;
+
+  base.transaction(() => {
+    if (!columnas.has("proveedor_contacto_id")) {
+      base.exec(
+        "ALTER TABLE operaciones ADD COLUMN proveedor_contacto_id TEXT REFERENCES contactos(id) ON DELETE SET NULL",
+      );
+    }
+    if (!columnas.has("cliente_contacto_id")) {
+      base.exec(
+        "ALTER TABLE operaciones ADD COLUMN cliente_contacto_id TEXT REFERENCES contactos(id) ON DELETE SET NULL",
+      );
+    }
+    if (columnas.has("proveedor") && conTextoViejo === 0) {
+      base.exec("ALTER TABLE operaciones DROP COLUMN proveedor");
+    }
+  })();
 }
 
 export function obtenerBase(): Database.Database {
