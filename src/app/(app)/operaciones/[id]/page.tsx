@@ -33,7 +33,7 @@ export default async function OperacionPage({
     : 0;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 py-8">
+    <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
       <Link
         href="/tablero"
         className="text-sm font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"

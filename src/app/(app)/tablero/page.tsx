@@ -14,7 +14,7 @@ export default async function TableroPage() {
   const operaciones = obtenerOperacionesDelUsuario(usuario.id);
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">Mi tablero</h1>

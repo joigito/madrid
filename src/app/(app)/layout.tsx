@@ -22,21 +22,28 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-3">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link href="/tablero" className="text-sm font-semibold tracking-tight">
-            Madrid Gestión de Comercio Internacional
+            <span className="sm:hidden">Madrid</span>
+            <span className="hidden sm:inline">
+              Madrid Gestión de Comercio Internacional
+            </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <TemaToggle temaInicial={tema} />
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+            <span
+              title={usuario.email}
+              className="hidden max-w-[14rem] truncate text-sm text-slate-500 sm:inline dark:text-slate-400"
+            >
               {usuario.email}
             </span>
             <form action={cerrarSesion}>
               <button
                 type="submit"
-                className="text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                className="rounded-lg px-2 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               >
-                Cerrar sesión
+                <span className="hidden sm:inline">Cerrar sesión</span>
+                <span className="sm:hidden">Salir</span>
               </button>
             </form>
           </div>

@@ -24,7 +24,7 @@ export function TemaToggle({ temaInicial }: { temaInicial: Tema }) {
       onClick={alternar}
       aria-label={`Cambiar a modo ${destino}`}
       title={`Cambiar a modo ${destino}`}
-      className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+      className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
     >
       {tema === "oscuro" ? <IconoSol /> : <IconoLuna />}
     </button>
@@ -40,7 +40,7 @@ function IconoLuna() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className="h-5 w-5"
       aria-hidden="true"
     >
       <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
@@ -57,7 +57,7 @@ function IconoSol() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className="h-5 w-5"
       aria-hidden="true"
     >
       <circle cx="12" cy="12" r="4" />

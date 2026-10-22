@@ -6,7 +6,7 @@ export default async function LoginPage() {
   const tema = await leerTema();
 
   return (
-    <main className="relative mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-6 py-16">
+    <main className="relative mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-4 py-12 sm:px-6 sm:py-16">
       <div className="absolute right-6 top-6">
         <TemaToggle temaInicial={tema} />
       </div>

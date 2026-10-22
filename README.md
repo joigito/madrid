@@ -23,6 +23,7 @@ Cada etapa trae el link oficial del organismo y una fecha límite sugerida que s
 - **Auth propia** — `crypto.scrypt` para las contraseñas y sesiones en cookie `httpOnly` con token aleatorio guardado hasheado (SHA-256) en la tabla `sessions`
 - **Tailwind CSS 4**
 - **Modo oscuro** — variante `dark` de Tailwind con la preferencia en la cookie `tema`: el servidor renderiza con el tema correcto (sin destello al cargar) y el botón del header cambia el tema al instante en el cliente
+- **PWA instalable** — `app/manifest.ts` con iconos generados por `pnpm iconos` (incluida la variante *maskable* para Android), `theme-color` según el tema activo y `apple-touch-icon`: se puede usar desde el teléfono como una app más ("Agregar a pantalla de inicio"), con `display: standalone` y sin barra de navegador
 
 ## Correr en local
 
