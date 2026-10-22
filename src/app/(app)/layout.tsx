@@ -1,24 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { signOut } from "@/lib/auth/actions";
-import { createClient } from "@/lib/supabase/server";
+import { cerrarSesion } from "@/lib/auth/actions";
+import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
 
 export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const usuario = await obtenerUsuarioDeSesion();
 
-  if (!user) {
+  if (!usuario) {
     redirect("/login");
   }
-
-  const email = user.email ?? "Usuario";
 
   return (
     <div className="flex min-h-full flex-col">
@@ -28,8 +23,8 @@ export default async function AppLayout({
             Madrid Gestión de Comercio Exterior
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-500">{email}</span>
-            <form action={signOut}>
+            <span className="text-sm text-slate-500">{usuario.email}</span>
+            <form action={cerrarSesion}>
               <button
                 type="submit"
                 className="text-sm font-medium text-slate-600 transition hover:text-slate-900"

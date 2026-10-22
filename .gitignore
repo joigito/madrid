@@ -34,8 +34,8 @@ yarn-error.log*
 .env*
 !.env.example
 
-# supabase local artifacts
-/supabase/.temp/
+# sqlite database
+/data/
 
 # local caches
 /.atl/

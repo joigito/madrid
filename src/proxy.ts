@@ -1,9 +1,8 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/config";
+import { COOKIE_SESION, buscarUsuarioPorToken } from "@/lib/auth/session";
 
-const RUTAS_PUBLICAS = ["/login", "/auth", "/configuracion"];
+const RUTAS_PUBLICAS = ["/login"];
 
 function esRutaPublica(pathname: string) {
   return RUTAS_PUBLICAS.some(
@@ -12,52 +11,24 @@ function esRutaPublica(pathname: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  // Sin credenciales configuradas dejamos pasar: permite build/dev sin Supabase.
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return NextResponse.next({ request });
-  }
-
-  let response = NextResponse.next({ request });
-
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet, headers) {
-        for (const { name, value } of cookiesToSet) {
-          request.cookies.set(name, value);
-        }
-        response = NextResponse.next({ request });
-        for (const { name, value, options } of cookiesToSet) {
-          response.cookies.set(name, value, options);
-        }
-        for (const [key, value] of Object.entries(headers)) {
-          response.headers.set(key, value);
-        }
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const token = request.cookies.get(COOKIE_SESION)?.value;
+  const usuario = token ? buscarUsuarioPorToken(token) : null;
 
   const { pathname } = request.nextUrl;
 
-  if (!user && !esRutaPublica(pathname)) {
+  if (!usuario && !esRutaPublica(pathname)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (user && pathname === "/login") {
+  if (usuario && pathname === "/login") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/tablero";
     return NextResponse.redirect(redirectUrl);
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

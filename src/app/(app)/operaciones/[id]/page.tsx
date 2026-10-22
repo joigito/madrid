@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
+import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
 import { formatearFecha } from "@/lib/fechas";
 import {
   calcularSemaforo,
@@ -17,7 +18,11 @@ export default async function OperacionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await obtenerOperacionPorId(id);
+
+  const usuario = await obtenerUsuarioDeSesion();
+  if (!usuario) redirect("/login");
+
+  const data = obtenerOperacionPorId(usuario.id, id);
 
   if (!data) notFound();
 

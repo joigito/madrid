@@ -3,138 +3,126 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
+import { obtenerBase } from "@/lib/db";
 import { sumarDias } from "@/lib/fechas";
-import { createClient } from "@/lib/supabase/server";
+
+import { obtenerCatalogo } from "./queries";
 
 export async function crearOperacion(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
+  const usuario = await obtenerUsuarioDeSesion();
+  if (!usuario) redirect("/login");
 
   const descripcion = String(formData.get("descripcion") ?? "").trim();
-  if (!descripcion) throw new Error("La descripción es obligatoria.");
+  if (!descripcion) redirect("/tablero");
 
-  const referencia = String(formData.get("referencia") ?? "").trim() || null;
-  const proveedor = String(formData.get("proveedor") ?? "").trim() || null;
-  const pais_origen = String(formData.get("pais_origen") ?? "").trim() || null;
-  const incoterm = String(formData.get("incoterm") ?? "").trim() || null;
-  const fecha_inicio =
-    String(formData.get("fecha_inicio") ?? "") ||
+  const base = obtenerBase();
+  const operacionId = crypto.randomUUID();
+  const fechaInicio =
+    String(formData.get("fecha_inicio") ?? "").trim() ||
     new Date().toISOString().slice(0, 10);
 
-  const { data: operacion, error: errorOperacion } = await supabase
-    .from("operaciones")
-    .insert({
-      user_id: user.id,
-      descripcion,
-      referencia,
-      proveedor,
-      pais_origen,
-      incoterm,
-      fecha_inicio,
-    })
-    .select("id")
-    .single();
+  base
+    .transaction(() => {
+      base
+        .prepare(
+          `INSERT INTO operaciones
+             (id, user_id, referencia, descripcion, proveedor, pais_origen, incoterm, fecha_inicio)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .run(
+          operacionId,
+          usuario.id,
+          vacioANulo(formData.get("referencia")),
+          descripcion,
+          vacioANulo(formData.get("proveedor")),
+          vacioANulo(formData.get("pais_origen")),
+          vacioANulo(formData.get("incoterm")),
+          fechaInicio,
+        );
 
-  if (errorOperacion) throw errorOperacion;
+      const insertarEtapa = base.prepare(
+        `INSERT INTO etapas_operacion
+           (id, operacion_id, user_id, orden, nombre, organismo, url, fecha_limite)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      );
 
-  const { data: catalogo, error: errorCatalogo } = await supabase
-    .from("catalogo_etapas")
-    .select("*")
-    .eq("tipo_operacion", "importacion")
-    .order("orden", { ascending: true });
-
-  if (errorCatalogo) throw errorCatalogo;
-
-  if (catalogo && catalogo.length > 0) {
-    const etapas = catalogo.map((item) => ({
-      operacion_id: operacion.id,
-      user_id: user.id,
-      orden: item.orden,
-      nombre: item.nombre,
-      organismo: item.organismo,
-      url: item.url,
-      fecha_limite: sumarDias(fecha_inicio, item.plazo_dias),
-    }));
-
-    const { error: errorEtapas } = await supabase
-      .from("etapas_operacion")
-      .insert(etapas);
-    if (errorEtapas) throw errorEtapas;
-  }
+      for (const etapa of obtenerCatalogo()) {
+        insertarEtapa.run(
+          crypto.randomUUID(),
+          operacionId,
+          usuario.id,
+          etapa.orden,
+          etapa.nombre,
+          etapa.organismo,
+          etapa.url,
+          sumarDias(fechaInicio, etapa.plazo_dias),
+        );
+      }
+    })();
 
   revalidatePath("/tablero");
-  redirect(`/operaciones/${operacion.id}`);
+  redirect(`/operaciones/${operacionId}`);
 }
 
 export async function toggleEtapa(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const usuario = await obtenerUsuarioDeSesion();
+  if (!usuario) redirect("/login");
 
-  if (!user) redirect("/login");
+  const etapaId = String(formData.get("etapaId") ?? "");
+  const completada = String(formData.get("completada") ?? "") === "true";
+  if (!etapaId) return;
 
-  const etapaId = String(formData.get("etapaId"));
-  const completada = formData.get("completada") === "true";
+  const base = obtenerBase();
+  const etapa = base
+    .prepare("SELECT id, operacion_id FROM etapas_operacion WHERE id = ? AND user_id = ?")
+    .get(etapaId, usuario.id) as { id: string; operacion_id: string } | undefined;
+  if (!etapa) return;
 
-  const { data: etapa, error: errorFetch } = await supabase
-    .from("etapas_operacion")
-    .select("operacion_id")
-    .eq("id", etapaId)
-    .eq("user_id", user.id)
-    .single();
-
-  if (errorFetch) throw errorFetch;
-
-  const { error } = await supabase
-    .from("etapas_operacion")
-    .update({
-      completada,
-      completada_at: completada ? new Date().toISOString() : null,
-    })
-    .eq("id", etapaId)
-    .eq("user_id", user.id);
-
-  if (error) throw error;
+  base
+    .prepare(
+      `UPDATE etapas_operacion
+          SET completada = ?, completada_at = CASE WHEN ? = 1 THEN datetime('now') ELSE NULL END
+        WHERE id = ? AND user_id = ?`,
+    )
+    .run(completada ? 1 : 0, completada ? 1 : 0, etapaId, usuario.id);
 
   revalidatePath(`/operaciones/${etapa.operacion_id}`);
   revalidatePath("/tablero");
 }
 
 export async function actualizarEtapa(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const usuario = await obtenerUsuarioDeSesion();
+  if (!usuario) redirect("/login");
 
-  if (!user) redirect("/login");
+  const etapaId = String(formData.get("etapaId") ?? "");
+  if (!etapaId) return;
 
-  const etapaId = String(formData.get("etapaId"));
-  const fechaLimite = String(formData.get("fecha_limite") ?? "").trim() || null;
-  const organismo = String(formData.get("organismo") ?? "").trim() || null;
-  const url = String(formData.get("url") ?? "").trim() || null;
+  const base = obtenerBase();
+  const etapa = base
+    .prepare("SELECT id, operacion_id FROM etapas_operacion WHERE id = ? AND user_id = ?")
+    .get(etapaId, usuario.id) as { id: string; operacion_id: string } | undefined;
+  if (!etapa) return;
 
-  const { data: etapa, error: errorFetch } = await supabase
-    .from("etapas_operacion")
-    .select("operacion_id")
-    .eq("id", etapaId)
-    .eq("user_id", user.id)
-    .single();
-
-  if (errorFetch) throw errorFetch;
-
-  const { error } = await supabase
-    .from("etapas_operacion")
-    .update({ fecha_limite: fechaLimite, organismo, url })
-    .eq("id", etapaId)
-    .eq("user_id", user.id);
-
-  if (error) throw error;
+  base
+    .prepare(
+      `UPDATE etapas_operacion
+          SET fecha_limite = ?, organismo = ?, url = ?
+        WHERE id = ? AND user_id = ?`,
+    )
+    .run(
+      vacioANulo(formData.get("fecha_limite")),
+      vacioANulo(formData.get("organismo")),
+      vacioANulo(formData.get("url")),
+      etapaId,
+      usuario.id,
+    );
 
   revalidatePath(`/operaciones/${etapa.operacion_id}`);
   revalidatePath("/tablero");
+}
+
+function vacioANulo(valor: FormDataEntryValue | null): string | null {
+  const texto = String(valor ?? "").trim();
+  return texto === "" ? null : texto;
 }

@@ -1,12 +1,17 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { obtenerUsuarioDeSesion } from "@/lib/auth/session";
 import { semaforoOperacion, CLASES_SEMAFORO, ETIQUETA_SEMAFORO } from "@/lib/domain/vencimientos";
 import { formatearFecha } from "@/lib/fechas";
 import { crearOperacion } from "@/lib/operaciones/actions";
 import { obtenerOperacionesDelUsuario } from "@/lib/operaciones/queries";
 
 export default async function TableroPage() {
-  const operaciones = await obtenerOperacionesDelUsuario();
+  const usuario = await obtenerUsuarioDeSesion();
+  if (!usuario) redirect("/login");
+
+  const operaciones = obtenerOperacionesDelUsuario(usuario.id);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">

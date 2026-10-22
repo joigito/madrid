@@ -30,8 +30,12 @@ export interface EtapaOperacion {
   notas: string | null;
 }
 
+export interface OperacionConEtapas extends Operacion {
+  etapas_operacion: EtapaOperacion[];
+}
+
 export interface CatalogoEtapa {
-  id: string;
+  id: number;
   tipo_operacion: TipoOperacion;
   orden: number;
   nombre: string;

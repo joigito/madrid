@@ -1,62 +1,122 @@
-import { createClient } from "@/lib/supabase/server";
-import type { EtapaOperacion, Operacion, TipoOperacion } from "@/lib/domain/types";
+import { obtenerBase } from "@/lib/db";
+import type {
+  CatalogoEtapa,
+  EtapaOperacion,
+  EstadoOperacion,
+  Operacion,
+  OperacionConEtapas,
+  TipoOperacion,
+} from "@/lib/domain/types";
 
-export async function obtenerOperacionesDelUsuario() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("operaciones")
-    .select("*, etapas_operacion(*, operacion_id)")
-    .order("created_at", { ascending: false });
+type Fila = Record<string, unknown>;
 
-  if (error) throw error;
-  return (data ?? []) as Array<
-    Operacion & { etapas_operacion: EtapaOperacion[] }
-  >;
+const OPERACIONES_POR_USUARIO = `
+  SELECT * FROM operaciones
+   WHERE user_id = ?
+   ORDER BY datetime(created_at) DESC, id ASC`;
+
+const ETAPAS_POR_USUARIO = `
+  SELECT * FROM etapas_operacion
+   WHERE user_id = ?
+   ORDER BY orden ASC`;
+
+export function obtenerOperacionesDelUsuario(
+  userId: string,
+): OperacionConEtapas[] {
+  const base = obtenerBase();
+
+  const operaciones = base
+    .prepare(OPERACIONES_POR_USUARIO)
+    .all(userId) as Fila[];
+
+  const etapas = base.prepare(ETAPAS_POR_USUARIO).all(userId) as Fila[];
+  const etapasPorOperacion = new Map<string, EtapaOperacion[]>();
+  for (const fila of etapas) {
+    const etapa = mapearEtapa(fila);
+    const lista = etapasPorOperacion.get(etapa.operacion_id) ?? [];
+    lista.push(etapa);
+    etapasPorOperacion.set(etapa.operacion_id, lista);
+  }
+
+  return operaciones.map((fila) => {
+    const operacion = mapearOperacion(fila);
+    return {
+      ...operacion,
+      etapas_operacion: etapasPorOperacion.get(operacion.id) ?? [],
+    };
+  });
 }
 
-export async function obtenerOperacionPorId(operacionId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export function obtenerOperacionPorId(
+  userId: string,
+  operacionId: string,
+): { operacion: Operacion; etapas: EtapaOperacion[] } | null {
+  const base = obtenerBase();
 
-  if (!user) return null;
+  const filaOperacion = base
+    .prepare("SELECT * FROM operaciones WHERE id = ? AND user_id = ?")
+    .get(operacionId, userId) as Fila | undefined;
+  if (!filaOperacion) return null;
 
-  const { data: operacion, error: errorOperacion } = await supabase
-    .from("operaciones")
-    .select("*")
-    .eq("id", operacionId)
-    .eq("user_id", user.id)
-    .single();
+  const etapas = (
+    base
+      .prepare("SELECT * FROM etapas_operacion WHERE operacion_id = ? AND user_id = ? ORDER BY orden ASC")
+      .all(operacionId, userId) as Fila[]
+  ).map(mapearEtapa);
 
-  if (errorOperacion) throw errorOperacion;
-  if (!operacion) return null;
+  return { operacion: mapearOperacion(filaOperacion), etapas };
+}
 
-  const { data: etapas, error: errorEtapas } = await supabase
-    .from("etapas_operacion")
-    .select("*")
-    .eq("operacion_id", operacionId)
-    .eq("user_id", user.id)
-    .order("orden", { ascending: true });
+export function obtenerCatalogo(): CatalogoEtapa[] {
+  const filas = obtenerBase()
+    .prepare(
+      "SELECT * FROM catalogo_etapas WHERE tipo_operacion = 'importacion' ORDER BY orden ASC",
+    )
+    .all() as Fila[];
+  return filas.map(mapearCatalogo);
+}
 
-  if (errorEtapas) throw errorEtapas;
-
+function mapearOperacion(fila: Fila): Operacion {
   return {
-    operacion: operacion as Operacion,
-    etapas: (etapas ?? []) as EtapaOperacion[],
+    id: fila.id as string,
+    user_id: fila.user_id as string,
+    referencia: (fila.referencia as string) ?? null,
+    descripcion: fila.descripcion as string,
+    proveedor: (fila.proveedor as string) ?? null,
+    pais_origen: (fila.pais_origen as string) ?? null,
+    incoterm: (fila.incoterm as string) ?? null,
+    estado: fila.estado as EstadoOperacion,
+    fecha_inicio: fila.fecha_inicio as string,
+    created_at: fila.created_at as string,
+    updated_at: fila.updated_at as string,
   };
 }
 
-export async function obtenerCatalogo(
-  tipo: TipoOperacion = "importacion",
-) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("catalogo_etapas")
-    .select("*")
-    .eq("tipo_operacion", tipo)
-    .order("orden", { ascending: true });
+function mapearEtapa(fila: Fila): EtapaOperacion {
+  return {
+    id: fila.id as string,
+    operacion_id: fila.operacion_id as string,
+    user_id: fila.user_id as string,
+    orden: fila.orden as number,
+    nombre: fila.nombre as string,
+    organismo: (fila.organismo as string) ?? null,
+    url: (fila.url as string) ?? null,
+    fecha_limite: (fila.fecha_limite as string) ?? null,
+    completada: Number(fila.completada) === 1,
+    completada_at: (fila.completada_at as string) ?? null,
+    notas: (fila.notas as string) ?? null,
+  };
+}
 
-  if (error) throw error;
-  return data ?? [];
+function mapearCatalogo(fila: Fila): CatalogoEtapa {
+  return {
+    id: fila.id as number,
+    tipo_operacion: fila.tipo_operacion as TipoOperacion,
+    orden: fila.orden as number,
+    nombre: fila.nombre as string,
+    organismo: (fila.organismo as string) ?? null,
+    url: (fila.url as string) ?? null,
+    plazo_dias: fila.plazo_dias as number,
+    descripcion: (fila.descripcion as string) ?? null,
+  };
 }
