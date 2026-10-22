@@ -1,6 +1,6 @@
-# Madrid Gestión de Comercio Exterior
+# Madrid Gestión de Comercio Internacional
 
-Espacio de trabajo privado para el operador de comercio exterior: el **expediente de importación** es la unidad central, con sus 7 etapas, el organismo responsable de cada una y sus vencimientos.
+Espacio de trabajo privado para el operador de comercio internacional: el **expediente de importación** es la unidad central, con sus 7 etapas, el organismo responsable de cada una y sus vencimientos.
 
 ## Etapas de la importación
 

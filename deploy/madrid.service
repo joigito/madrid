@@ -1,5 +1,5 @@
 [Unit]
-Description=Madrid Gestion de Comercio Exterior
+Description=Madrid Gestion de Comercio Internacional
 After=network-online.target
 Wants=network-online.target
 

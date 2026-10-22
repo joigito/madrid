@@ -9,9 +9,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Madrid Gestión de Comercio Exterior",
+  title: "Madrid Gestión de Comercio Internacional",
   description:
-    "Expedientes de importación para el operador de comercio exterior: etapas, organismos y vencimientos en un solo lugar.",
+    "Expedientes de importación para el operador de comercio internacional: etapas, organismos y vencimientos en un solo lugar.",
 };
 
 export default function RootLayout({
