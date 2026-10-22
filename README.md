@@ -22,6 +22,7 @@ Cada etapa trae el link oficial del organismo y una fecha límite sugerida que s
 - **SQLite** (`better-sqlite3`, archivo en `data/madrid.db`) — sin servicios externos ni cuotas
 - **Auth propia** — `crypto.scrypt` para las contraseñas y sesiones en cookie `httpOnly` con token aleatorio guardado hasheado (SHA-256) en la tabla `sessions`
 - **Tailwind CSS 4**
+- **Modo oscuro** — variante `dark` de Tailwind con la preferencia en la cookie `tema`: el servidor renderiza con el tema correcto (sin destello al cargar) y el botón del header cambia el tema al instante en el cliente
 
 ## Correr en local
 

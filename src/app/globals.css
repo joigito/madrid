@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
 }
 
 body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
 }

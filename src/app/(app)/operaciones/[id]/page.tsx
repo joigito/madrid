@@ -36,18 +36,18 @@ export default async function OperacionPage({
     <div className="mx-auto w-full max-w-4xl px-6 py-8">
       <Link
         href="/tablero"
-        className="text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        className="text-sm font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
       >
         ← Volver al tablero
       </Link>
 
-      <header className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <header className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
               {operacion.descripcion}
             </h1>
-            <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-600 sm:grid-cols-4">
+            <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-600 sm:grid-cols-4 dark:text-slate-400">
               <Info etiqueta="Referencia" valor={operacion.referencia ?? "—"} />
               <Info etiqueta="Proveedor" valor={operacion.proveedor ?? "—"} />
               <Info etiqueta="Origen" valor={operacion.pais_origen ?? "—"} />
@@ -55,16 +55,16 @@ export default async function OperacionPage({
             </dl>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-semibold text-slate-900">{progreso}%</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{progreso}%</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               {completadas} de {etapas.length} etapas
             </p>
           </div>
         </div>
 
-        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
-            className="h-full rounded-full bg-slate-900 transition-all"
+            className="h-full rounded-full bg-slate-900 transition-all dark:bg-slate-100"
             style={{ width: `${progreso}%` }}
           />
         </div>
@@ -78,7 +78,7 @@ export default async function OperacionPage({
           return (
             <li
               key={etapa.id}
-              className={`rounded-xl border bg-white p-4 shadow-sm ${
+              className={`rounded-xl border bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 ${
                 etapa.completada ? "border-slate-200 opacity-70" : "border-slate-200"
               }`}
             >
@@ -86,8 +86,8 @@ export default async function OperacionPage({
                 <span
                   className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                     etapa.completada
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-slate-100 text-slate-600"
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                      : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                   }`}
                 >
                   {etapa.completada ? "✓" : indice + 1}
@@ -98,8 +98,8 @@ export default async function OperacionPage({
                     <h2
                       className={`text-sm font-semibold ${
                         etapa.completada
-                          ? "text-slate-500 line-through"
-                          : "text-slate-900"
+                          ? "text-slate-500 line-through dark:text-slate-500"
+                          : "text-slate-900 dark:text-slate-100"
                       }`}
                     >
                       {etapa.nombre}
@@ -111,7 +111,7 @@ export default async function OperacionPage({
                     </span>
                   </div>
 
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400">
                     <span>
                       Organismo:{" "}
                       {etapa.organismo ? (
@@ -120,12 +120,12 @@ export default async function OperacionPage({
                             href={etapa.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="font-medium text-slate-700 underline decoration-slate-300 hover:decoration-slate-500"
+                            className="font-medium text-slate-700 underline decoration-slate-300 hover:decoration-slate-500 dark:text-slate-300 dark:decoration-slate-600 dark:hover:decoration-slate-400"
                           >
                             {etapa.organismo}
                           </a>
                         ) : (
-                          <span className="font-medium text-slate-700">
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
                             {etapa.organismo}
                           </span>
                         )
@@ -138,9 +138,9 @@ export default async function OperacionPage({
                       <span
                         className={
                           dias < 0
-                            ? "font-medium text-red-600"
+                            ? "font-medium text-red-600 dark:text-red-400"
                             : dias <= 3
-                              ? "font-medium text-amber-600"
+                              ? "font-medium text-amber-600 dark:text-amber-400"
                               : ""
                         }
                       >
@@ -159,14 +159,14 @@ export default async function OperacionPage({
                       />
                       <button
                         type="submit"
-                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                       >
                         {etapa.completada ? "Reabrir etapa" : "Marcar completada"}
                       </button>
                     </form>
 
                     <details className="group">
-                      <summary className="cursor-pointer list-none text-xs font-medium text-slate-500 transition hover:text-slate-900">
+                      <summary className="cursor-pointer list-none text-xs font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
                         Editar etapa
                       </summary>
                       <form
@@ -174,35 +174,35 @@ export default async function OperacionPage({
                         className="mt-3 grid gap-3 sm:grid-cols-3"
                       >
                         <input type="hidden" name="etapaId" value={etapa.id} />
-                        <label className="text-xs font-medium text-slate-600">
+                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                           Fecha límite
                           <input
                             type="date"
                             name="fecha_limite"
                             defaultValue={etapa.fecha_limite ?? ""}
-                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400"
                           />
                         </label>
-                        <label className="text-xs font-medium text-slate-600">
+                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                           Organismo
                           <input
                             name="organismo"
                             defaultValue={etapa.organismo ?? ""}
-                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400"
                           />
                         </label>
-                        <label className="text-xs font-medium text-slate-600">
+                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                           Link
                           <input
                             name="url"
                             defaultValue={etapa.url ?? ""}
-                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+                            className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400"
                           />
                         </label>
                         <div className="sm:col-span-3">
                           <button
                             type="submit"
-                            className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800"
+                            className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
                           >
                             Guardar cambios
                           </button>
@@ -223,10 +223,10 @@ export default async function OperacionPage({
 function Info({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide text-slate-400">
+      <dt className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
         {etiqueta}
       </dt>
-      <dd className="text-slate-700">{valor}</dd>
+      <dd className="text-slate-700 dark:text-slate-300">{valor}</dd>
     </div>
   );
 }
