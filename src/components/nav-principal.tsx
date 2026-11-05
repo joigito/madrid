@@ -7,6 +7,7 @@ const ENLACES = [
   { href: "/tablero", texto: "Tablero" },
   { href: "/contactos", texto: "Contactos" },
   { href: "/recursos", texto: "Recursos" },
+  { href: "/creditos", texto: "Créditos" },
 ];
 
 export function NavPrincipal() {
