@@ -6,12 +6,24 @@ type Persona = {
 };
 
 /**
- * Completar con los datos reales cuando estén confirmados.
- * Cada persona se muestra como una tarjeta; `detalle` es opcional
- * (por ejemplo el curso, la comisión o el rol).
+ * Listado de créditos. `detalle` es opcional (curso, comisión o rol).
  */
-const ALUMNOS: Persona[] = [];
-const DOCENTES: Persona[] = [];
+const ALUMNOS: Persona[] = [
+  { nombre: "Ari Sanchez Ortelli" },
+  { nombre: "Yamila Dulce" },
+  { nombre: "Emanuel Bernal" },
+  { nombre: "Roberto Quinteros" },
+];
+
+const DOCENTES: Persona[] = [
+  { nombre: "Claudia Seleme", detalle: "Licenciada · Profesora de la cátedra" },
+  { nombre: "Jorge Rubén Díaz", detalle: "Profesor · Desarrollador" },
+];
+
+const CATEDRA = {
+  materia: "Ética y deontología profesional",
+  carrera: "Técnico Superior en Comercio Internacional",
+};
 
 const INSTITUCION = {
   nombre: "Instituto Superior «General San Martín»",
@@ -83,6 +95,28 @@ export default function CreditosPage() {
             </p>
             <p className="mt-0.5 text-xs text-brand-500 dark:text-brand-400">
               {INSTITUCION.detalle}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold">Cátedra</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-brand-200 bg-white p-4 shadow-sm dark:border-brand-700 dark:bg-brand-900">
+            <p className="text-xs font-medium uppercase tracking-wide text-brand-400 dark:text-brand-500">
+              Materia
+            </p>
+            <p className="mt-1 text-sm font-semibold text-brand-900 dark:text-brand-100">
+              {CATEDRA.materia}
+            </p>
+          </div>
+          <div className="rounded-xl border border-brand-200 bg-white p-4 shadow-sm dark:border-brand-700 dark:bg-brand-900">
+            <p className="text-xs font-medium uppercase tracking-wide text-brand-400 dark:text-brand-500">
+              Carrera
+            </p>
+            <p className="mt-1 text-sm font-semibold text-brand-900 dark:text-brand-100">
+              {CATEDRA.carrera}
             </p>
           </div>
         </div>
