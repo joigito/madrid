@@ -8,9 +8,9 @@ import { contactosParaSelector } from "@/lib/contactos/queries";
 import { crearOperacion } from "@/lib/operaciones/actions";
 import { obtenerOperacionesDelUsuario } from "@/lib/operaciones/queries";
 
-const CLASE_LABEL = "block text-sm font-medium text-slate-700 dark:text-slate-300";
+const CLASE_LABEL = "block text-sm font-medium text-brand-700 dark:text-brand-300";
 const CLASE_INPUT =
-  "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700";
+  "mt-1 w-full rounded-lg border border-brand-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:border-brand-600 dark:bg-brand-800 dark:text-brand-100 dark:focus:border-brand-400 dark:focus:ring-brand-700";
 
 export default async function TableroPage() {
   const usuario = await obtenerUsuarioDeSesion();
@@ -25,13 +25,13 @@ export default async function TableroPage() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">Mi tablero</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-brand-600 dark:text-brand-400">
             Seguimiento de operaciones, etapas, organismos y vencimientos.
           </p>
         </div>
         <Link
           href="#nueva-operacion"
-          className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+          className="rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-brand-800 dark:bg-brand-100 dark:text-brand-900 dark:hover:bg-white"
         >
           Nueva operación
         </Link>
@@ -39,8 +39,8 @@ export default async function TableroPage() {
 
       <section className="mt-8">
         {operaciones.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-slate-600 dark:text-slate-400">
+          <div className="rounded-xl border border-dashed border-brand-300 bg-white p-10 text-center dark:border-brand-700 dark:bg-brand-900">
+            <p className="text-brand-600 dark:text-brand-400">
               No tenés operaciones aún. Creá la primera para empezar a seguir
               vencimientos y organismos.
             </p>
@@ -53,18 +53,18 @@ export default async function TableroPage() {
                 <Link
                   key={op.id}
                   href={`/operaciones/${op.id}`}
-                  className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
+                  className="flex flex-col gap-3 rounded-xl border border-brand-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-brand-700 dark:bg-brand-900"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="text-sm font-semibold text-brand-900 dark:text-brand-100">
                         {op.descripcion}
                       </p>
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-xs text-brand-500 dark:text-brand-400">
                         Ref.: {op.referencia ?? "—"} • Inicio: {formatearFecha(op.fecha_inicio)}
                       </p>
                       {(op.proveedor_nombre || op.cliente_nombre) && (
-                        <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                        <p className="mt-1 truncate text-xs text-brand-500 dark:text-brand-400">
                           {op.proveedor_nombre ?? "Sin proveedor"}
                           {op.cliente_nombre ? ` → ${op.cliente_nombre}` : ""}
                         </p>
@@ -76,7 +76,7 @@ export default async function TableroPage() {
                       {ETIQUETA_SEMAFORO[sem]}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center justify-between text-xs text-brand-500 dark:text-brand-400">
                     <span>{op.etapas_operacion.length} etapas</span>
                     <span>
                       {op.etapas_operacion.filter((e) => e.completada).length} completadas
@@ -90,10 +90,10 @@ export default async function TableroPage() {
       </section>
 
       <section id="nueva-operacion" className="mt-10">
-        <div className="mx-auto w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="mx-auto w-full max-w-2xl rounded-xl border border-brand-200 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900">
           <header className="mb-4">
             <h2 className="text-base font-semibold">Crear nueva operación (Importación)</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-sm text-brand-600 dark:text-brand-400">
               Se copian automáticamente las 7 etapas con sus organismos, links y
               fechas límite sugeridas (editables después).
             </p>
@@ -154,7 +154,7 @@ export default async function TableroPage() {
               </select>
             </div>
             {proveedores.length === 0 && clientes.length === 0 && (
-              <p className="text-xs text-slate-500 sm:col-span-2 dark:text-slate-400">
+              <p className="text-xs text-brand-500 sm:col-span-2 dark:text-brand-400">
                 Todavía no cargaste contactos.{" "}
                 <Link href="/contactos" className="font-medium underline">
                   Podés cargarlos acá
@@ -184,7 +184,7 @@ export default async function TableroPage() {
             <div className="sm:col-span-2">
               <button
                 type="submit"
-                className="mt-2 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                className="mt-2 w-full rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-800 dark:bg-brand-100 dark:text-brand-900 dark:hover:bg-white"
               >
                 Crear operación y cargar etapas
               </button>

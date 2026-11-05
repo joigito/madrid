@@ -4,6 +4,19 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
+  --color-brand-50: #faf6ee;
+  --color-brand-100: #f1e8d7;
+  --color-brand-200: #d6c39f;
+  --color-brand-300: #c9b89a;
+  --color-brand-400: #a1a19c;
+  --color-brand-500: #66452d;
+  --color-brand-600: #563520;
+  --color-brand-700: #303645;
+  --color-brand-800: #203144;
+  --color-brand-900: #132334;
+  --color-brand-950: #0a1220;
+  --color-accent: #e0ad1d;
+  --color-accent-dark: #b08920;
 }
 
 body {

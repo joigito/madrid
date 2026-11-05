@@ -12,10 +12,15 @@ export default async function LoginPage() {
       </div>
 
       <header className="text-center">
-        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        <img
+          src="/branding/logo.png"
+          alt="Madrid"
+          className="mx-auto h-20 w-20 rounded-full object-cover shadow-md"
+        />
+        <h1 className="mt-4 text-2xl font-semibold text-brand-900 dark:text-brand-100">
           Madrid Gestión de Comercio Internacional
         </h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-brand-600 dark:text-brand-400">
           Tu espacio de trabajo privado para seguir operaciones, organismos y
           vencimientos.
         </p>

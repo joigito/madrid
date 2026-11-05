@@ -24,7 +24,7 @@ export function TemaToggle({ temaInicial }: { temaInicial: Tema }) {
       onClick={alternar}
       aria-label={`Cambiar a modo ${destino}`}
       title={`Cambiar a modo ${destino}`}
-      className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+      className="flex h-11 w-11 items-center justify-center rounded-lg border border-brand-200 bg-white text-brand-600 shadow-sm transition hover:bg-brand-100 hover:text-brand-900 dark:border-brand-700 dark:bg-brand-800 dark:text-brand-300 dark:hover:bg-brand-700 dark:hover:text-brand-100"
     >
       {tema === "oscuro" ? <IconoSol /> : <IconoLuna />}
     </button>

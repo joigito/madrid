@@ -11,23 +11,13 @@ function esRutaPublica(pathname: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  const token = request.cookies.get(COOKIE_SESION)?.value;
-  const usuario = token ? buscarUsuarioPorToken(token) : null;
-
   const { pathname } = request.nextUrl;
-
-  if (!usuario && !esRutaPublica(pathname)) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  if (usuario && pathname === "/login") {
+  // Modo prueba: sin login obligatorio. Redirigir /login al tablero.
+  if (pathname === "/login") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/tablero";
     return NextResponse.redirect(redirectUrl);
   }
-
   return NextResponse.next();
 }
 

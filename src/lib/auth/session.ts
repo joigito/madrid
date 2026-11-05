@@ -48,8 +48,28 @@ export async function crearSesion(userId: string): Promise<void> {
 export async function obtenerUsuarioDeSesion(): Promise<UsuarioSesion | null> {
   const store = await cookies();
   const token = store.get(COOKIE_SESION)?.value;
-  if (!token) return null;
-  return buscarUsuarioPorToken(token);
+  if (token) {
+    const u = buscarUsuarioPorToken(token);
+    if (u) return u;
+  }
+  // Modo prueba: sin login, preferir usuario demo/ari, sino el primero disponible.
+  const base = obtenerBase();
+  let fila = base
+    .prepare("SELECT id, email FROM users WHERE email IN ('ari@sm.com','demo@madridext.local') ORDER BY CASE email WHEN 'ari@sm.com' THEN 0 ELSE 1 END LIMIT 1")
+    .get() as { id: string; email: string } | undefined;
+  if (!fila) {
+    fila = base
+      .prepare("SELECT id, email FROM users ORDER BY created_at ASC LIMIT 1")
+      .get() as { id: string; email: string } | undefined;
+  }
+  if (!fila) {
+    const id = crypto.randomUUID();
+    base
+      .prepare("INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)")
+      .run(id, "demo@madridext.local", "");
+    fila = { id, email: "demo@madridext.local" };
+  }
+  return fila;
 }
 
 export function buscarUsuarioPorToken(token: string): UsuarioSesion | null {

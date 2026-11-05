@@ -10,11 +10,11 @@ import {
 import { listarContactos } from "@/lib/contactos/queries";
 import type { Contacto } from "@/lib/domain/types";
 
-const CLASE_LABEL = "block text-sm font-medium text-slate-700 dark:text-slate-300";
+const CLASE_LABEL = "block text-sm font-medium text-brand-700 dark:text-brand-300";
 const CLASE_INPUT =
-  "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-700";
+  "mt-1 w-full rounded-lg border border-brand-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:border-brand-600 dark:bg-brand-800 dark:text-brand-100 dark:focus:border-brand-400 dark:focus:ring-brand-700";
 const CLASE_CHECK =
-  "h-4 w-4 rounded border-slate-300 accent-slate-900 dark:border-slate-600 dark:accent-slate-100";
+  "h-4 w-4 rounded border-brand-300 accent-brand-900 dark:border-brand-600 dark:accent-brand-100";
 
 export default async function ContactosPage({
   searchParams,
@@ -44,7 +44,7 @@ export default async function ContactosPage({
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">Contactos</h1>
-          <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 max-w-2xl text-sm text-brand-600 dark:text-brand-400">
             Las empresas o personas con las que operás: las que te venden
             (proveedores) y las que te compran (clientes). Una misma puede ser
             las dos cosas.
@@ -52,7 +52,7 @@ export default async function ContactosPage({
         </div>
         <Link
           href="#nuevo-contacto"
-          className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+          className="rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-brand-800 dark:bg-brand-100 dark:text-brand-900 dark:hover:bg-white"
         >
           Nuevo contacto
         </Link>
@@ -75,8 +75,8 @@ export default async function ContactosPage({
             href={valor === "todos" ? "/contactos" : `/contactos?rol=${valor}`}
             className={`rounded-lg border px-3 py-1.5 font-medium transition ${
               filtro === valor
-                ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
-                : "border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-800"
+                ? "border-brand-900 bg-brand-900 text-white dark:border-brand-100 dark:bg-brand-100 dark:text-brand-900"
+                : "border-brand-300 text-brand-600 hover:bg-brand-100 dark:border-brand-600 dark:text-brand-400 dark:hover:bg-brand-800"
             }`}
           >
             {texto}
@@ -86,8 +86,8 @@ export default async function ContactosPage({
 
       <section className="mt-4 grid gap-3">
         {activos.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+          <div className="rounded-xl border border-dashed border-brand-300 bg-white p-8 text-center dark:border-brand-700 dark:bg-brand-900">
+            <p className="text-sm text-brand-600 dark:text-brand-400">
               {filtro === "todos"
                 ? "Todavía no tenés contactos cargados."
                 : `No tenés ${filtro} cargados.`}
@@ -106,7 +106,7 @@ export default async function ContactosPage({
 
       {archivados.length > 0 && (
         <details className="mt-8">
-          <summary className="cursor-pointer list-none text-sm font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
+          <summary className="cursor-pointer list-none text-sm font-medium text-brand-500 transition hover:text-brand-900 dark:text-brand-400 dark:hover:text-brand-100">
             Archivados ({archivados.length})
           </summary>
           <div className="mt-3 grid gap-3">
@@ -118,10 +118,10 @@ export default async function ContactosPage({
       )}
 
       <section id="nuevo-contacto" className="mt-10">
-        <div className="mx-auto w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="mx-auto w-full max-w-2xl rounded-xl border border-brand-200 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900">
           <header className="mb-4">
             <h2 className="text-base font-semibold">Nuevo contacto</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-sm text-brand-600 dark:text-brand-400">
               Marcá si te vende, si te compra o las dos cosas.
             </p>
           </header>
@@ -130,7 +130,7 @@ export default async function ContactosPage({
             <div className="sm:col-span-2">
               <button
                 type="submit"
-                className="mt-2 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                className="mt-2 w-full rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-800 dark:bg-brand-100 dark:text-brand-900 dark:hover:bg-white"
               >
                 Guardar contacto
               </button>
@@ -152,11 +152,11 @@ function TarjetaContacto({
   const datos = [contacto.email, contacto.telefono].filter(Boolean).join(" · ");
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <article className="rounded-xl border border-brand-200 bg-white p-4 shadow-sm dark:border-brand-700 dark:bg-brand-900">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <h2 className="text-sm font-semibold text-brand-900 dark:text-brand-100">
               {contacto.nombre}
             </h2>
             {contacto.es_proveedor && (
@@ -170,21 +170,21 @@ function TarjetaContacto({
               </span>
             )}
             {contacto.archivado && (
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+              <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-600 dark:bg-brand-800 dark:text-brand-400">
                 Archivado
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-xs text-brand-500 dark:text-brand-400">
             {contacto.tipo === "persona" ? "Persona" : "Empresa"}
             {contacto.pais ? ` · ${contacto.pais}` : ""}
             {contacto.cuit ? ` · CUIT ${contacto.cuit}` : ""}
           </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-xs text-brand-500 dark:text-brand-400">
             {datos || "Sin datos de contacto"}
           </p>
           {contacto.notas && (
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <p className="mt-2 text-sm text-brand-600 dark:text-brand-300">
               {contacto.notas}
             </p>
           )}
@@ -194,7 +194,7 @@ function TarjetaContacto({
       <div className="mt-3 flex flex-wrap items-center gap-3">
         {!contacto.archivado && (
           <details open={editarAbierto} className="w-full">
-            <summary className="cursor-pointer list-none text-xs font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
+            <summary className="cursor-pointer list-none text-xs font-medium text-brand-500 transition hover:text-brand-900 dark:text-brand-400 dark:hover:text-brand-100">
               Editar datos
             </summary>
             <form
@@ -206,7 +206,7 @@ function TarjetaContacto({
               <div className="sm:col-span-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                  className="rounded-lg bg-brand-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-800 dark:bg-brand-100 dark:text-brand-900 dark:hover:bg-white"
                 >
                   Guardar cambios
                 </button>
@@ -223,7 +223,7 @@ function TarjetaContacto({
           />
           <button
             type="submit"
-            className="text-xs font-medium text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+            className="text-xs font-medium text-brand-500 transition hover:text-brand-900 dark:text-brand-400 dark:hover:text-brand-100"
           >
             {contacto.archivado ? "Restaurar" : "Archivar"}
           </button>
@@ -304,7 +304,7 @@ function CamposContacto({ contacto }: { contacto?: Contacto }) {
       <div className="sm:col-span-2">
         <fieldset className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <legend className={CLASE_LABEL}>Rol</legend>
-          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-brand-700 dark:text-brand-300">
             <input
               type="checkbox"
               name="es_proveedor"
@@ -313,7 +313,7 @@ function CamposContacto({ contacto }: { contacto?: Contacto }) {
             />
             Proveedor (me vende)
           </label>
-          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-brand-700 dark:text-brand-300">
             <input
               type="checkbox"
               name="es_cliente"

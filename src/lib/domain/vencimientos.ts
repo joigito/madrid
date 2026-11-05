@@ -58,7 +58,7 @@ export const CLASES_SEMAFORO: Record<Semaforo, string> = {
     "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-900",
   ok: "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-900",
   sin_fecha:
-    "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700",
+    "bg-brand-100 text-brand-600 border-brand-200 dark:bg-brand-800 dark:text-brand-400 dark:border-brand-700",
   completada:
     "bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-900",
 };
