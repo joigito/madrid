@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { ScrollAlFinal } from "@/components/scroll-al-final";
+
 type Persona = {
   nombre: string;
   detalle?: string;
@@ -74,6 +76,7 @@ function ListaPersonas({
 export default function CreditosPage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+      <ScrollAlFinal />
       <header>
         <h1 className="text-xl font-semibold">Créditos</h1>
         <p className="mt-1 text-sm text-brand-600 dark:text-brand-400">
